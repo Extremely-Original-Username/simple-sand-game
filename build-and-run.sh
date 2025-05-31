@@ -2,7 +2,8 @@ echo
 
 mkdir -p ./out
 
-g++ main.cpp -o ./out/main
+# lGL = openGL, lglfw = GLFW
+g++ main.cpp -o ./out/main -lglfw -lGL
 
 ./out/main
 
