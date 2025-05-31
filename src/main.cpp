@@ -2,6 +2,7 @@
 #include <GLFW/glfw3.h>
 #include <string>
 #include <cstdlib>
+#include "mainHelpers.h"
 using namespace std;
 
 const string title = "Simple Sand!";
@@ -9,19 +10,6 @@ const int windowWidth = 500;
 const int windowHeight = 450;
 const int gridWidth = 100;
 const int gridHeight = 90;
-
-//Callback to reset viewport size when window resized
-void framebuffer_size_callback(GLFWwindow* window, int width, int height)
-{
-    glViewport(0, 0, width, height);
-}  
-
-//Allow user to escape to end
-void processInput(GLFWwindow *window)
-{
-    if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, true);
-}
 
 int main() {
     cout << "Starting...\n";
