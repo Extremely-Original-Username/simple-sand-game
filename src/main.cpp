@@ -21,6 +21,13 @@ const char *vertexShaderSource = "#version 460 core\n"
     "   gl_Position = vec4(aPos, 1.0);\n"
     "}\0";
 
+const char *fragmentShaderSource = "#version 460 core\n"
+    "out vec4 FragColor;\n"
+    "void main()\n"
+    "{\n"
+    "   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
+    "}\0";
+
 int main() {
     cout << "Starting...\n";
     if (!glfwInit()){
@@ -48,7 +55,24 @@ int main() {
     glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
     glCompileShader(vertexShader);    
     checkShaderCompileErrors(vertexShader);
-    
+
+    unsigned int fragmentShader;
+    fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
+    glCompileShader(fragmentShader);
+    checkShaderCompileErrors(fragmentShader);
+
+    unsigned int shaderProgram;
+    shaderProgram = glCreateProgram();
+        
+    glAttachShader(shaderProgram, vertexShader);
+    glAttachShader(shaderProgram, fragmentShader);
+    glLinkProgram(shaderProgram);
+    checkProgramLinkErrors(shaderProgram);
+
+    //Not needed once linked
+    glDeleteShader(vertexShader);
+    glDeleteShader(fragmentShader);  
 
     cout << "Initialising data...\n";
     bool sandGrid [gridWidth][gridHeight];

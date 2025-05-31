@@ -30,4 +30,15 @@ inline void checkShaderCompileErrors(unsigned int shader)
     }
 }
 
+// Function to check for shader linking errors
+inline void checkProgramLinkErrors(unsigned int program)
+{
+    int  success;
+    char infoLog[512];
+    glGetProgramiv(program, GL_LINK_STATUS, &success);
+    if(!success) {
+        glGetProgramInfoLog(program, 512, NULL, infoLog);
+    }
+}
+
 #endif // MAIN_HELPERS_H
