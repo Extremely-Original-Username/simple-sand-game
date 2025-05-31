@@ -88,7 +88,7 @@ int main() {
         0.5f,  0.5f, 0.0f,  // top right
         0.5f, -0.5f, 0.0f,  // bottom right
        -0.5f, -0.5f, 0.0f,  // bottom left
-       -0.5f,  0.5f, 0.0f   // top left 
+       //-0.5f,  0.5f, 0.0f   // top left 
    };
 
    unsigned int drawPlaneindices[] = {
@@ -106,6 +106,9 @@ int main() {
     //Copy verted data to buffer
     glBufferData(GL_ARRAY_BUFFER, sizeof(drawPlaneVertices), drawPlaneVertices, GL_DYNAMIC_DRAW);
 
+    //Link vertex data to shader vertex attributes
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);  
 
     cout << "Beginning main loop...\n";
     while (!glfwWindowShouldClose(window))
@@ -113,7 +116,12 @@ int main() {
         processInput(window);
 
         /* Render here */
+        //Use shader program
         glClear(GL_COLOR_BUFFER_BIT);
+        glUseProgram(shaderProgram);
+        glBindVertexArray(VBO);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+        
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
