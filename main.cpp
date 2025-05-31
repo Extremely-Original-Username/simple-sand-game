@@ -1,11 +1,27 @@
 #include <iostream>
 #include <GLFW/glfw3.h>
 #include <string>
+#include <cstdlib>
 using namespace std;
 
 const string title = "Simple Sand!";
 const int windowWidth = 500;
 const int windowHeight = 450;
+const int gridWidth = 100;
+const int gridHeight = 90;
+
+//Callback to reset viewport size when window resized
+void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+{
+    glViewport(0, 0, width, height);
+}  
+
+//Allow user to escape to end
+void processInput(GLFWwindow *window)
+{
+    if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+        glfwSetWindowShouldClose(window, true);
+}
 
 int main() {
     cout << "Starting...\n";
@@ -20,13 +36,28 @@ int main() {
         glfwTerminate();
         return -1;
     }
+    glViewport(0, 0, windowWidth, windowHeight);
+    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
     cout << "Setting context...\n";
     glfwMakeContextCurrent(window);
 
+    cout << "Initialising data...\n";
+    bool sandGrid [gridWidth][gridHeight];
+    for (int x = 0; x < gridWidth; x++)
+    {
+        for (int y = 0; y < gridHeight; y++)
+        {
+            sandGrid[x][y] = rand() % 3 == 0;
+        }
+    }
+    
+
     cout << "Beginning main loop...\n";
     while (!glfwWindowShouldClose(window))
     {
+        processInput(window);
+
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
 
