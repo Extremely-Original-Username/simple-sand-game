@@ -96,6 +96,11 @@ int main() {
        1, 2, 3    // second triangle
    };  
 
+   //Create Vertex Array Object to hold multiple VBOs if needed
+   unsigned int VAO;
+   glGenVertexArrays(1, &VAO);
+   glBindVertexArray(VAO);
+
     //Create vertex buffer object
     unsigned int VBO;
     glGenBuffers(1, &VBO);  
@@ -119,7 +124,7 @@ int main() {
         //Use shader program
         glClear(GL_COLOR_BUFFER_BIT);
         glUseProgram(shaderProgram);
-        glBindVertexArray(VBO);
+        glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES, 0, 3);
         
 
