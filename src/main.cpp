@@ -148,6 +148,10 @@ int main() {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         
+        //Update a vertex position for demonstration
+        //Could be more efficient, just updating the whole buffer for now
+        drawPlaneVertices[1] += 0.01f; // Move the first vertex to the right
+        glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(drawPlaneVertices), drawPlaneVertices);
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
