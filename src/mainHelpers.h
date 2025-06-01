@@ -3,6 +3,12 @@
 
 #include <GLFW/glfw3.h>
 #include <GLES3/gl3.h>
+#include <fstream>
+#include <string>
+#include <iostream>
+#include <filesystem>
+using namespace std;
+
 
 // Callback to adjust the viewport when the window is resized
 inline void framebuffer_size_callback(GLFWwindow* window, int width, int height)
@@ -26,7 +32,7 @@ inline void checkShaderCompileErrors(unsigned int shader)
     if(!success)
     {
         glGetShaderInfoLog(shader, 512, NULL, infoLog);
-        std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
+        cerr << "ERROR::SHADER::COMPILATION_FAILED\n" << infoLog << std::endl;
     }
 }
 
@@ -39,6 +45,18 @@ inline void checkProgramLinkErrors(unsigned int program)
     if(!success) {
         glGetProgramInfoLog(program, 512, NULL, infoLog);
     }
+}
+
+//Function to load text from a file
+inline string loadFileToString(string filename){
+    ifstream file(filename);
+
+    if (!file.is_open()) cerr << "Failed to open file: " << filename << "\n";
+
+    ifstream infile { filename };
+    string file_contents { istreambuf_iterator<char>(infile), istreambuf_iterator<char>() };
+
+    return file_contents;
 }
 
 #endif // MAIN_HELPERS_H

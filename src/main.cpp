@@ -14,20 +14,6 @@ const int windowHeight = 450;
 const int gridWidth = 10;
 const int gridHeight = 9;
 
-const char *vertexShaderSource = "#version 460 core\n"
-    "layout (location = 0) in vec3 aPos;\n"
-    "void main()\n"
-    "{\n"
-    "   gl_Position = vec4(aPos, 1.0);\n"
-    "}\0";
-
-const char *fragmentShaderSource = "#version 460 core\n"
-    "out vec4 FragColor;\n"
-    "void main()\n"
-    "{\n"
-    "   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
-    "}\0";
-
 int main() {
     cout << "Starting...\n";
     if (!glfwInit()){
@@ -47,18 +33,25 @@ int main() {
     cout << "Setting context...\n";
     glfwMakeContextCurrent(window);
 
+    cout << "Loading shaders...\n";
+    const string vertexShaderSource = loadFileToString("./src/shaders/vertex.glsl");
+    const string fragmentShaderSource = loadFileToString("./src/shaders/fragment.glsl");
+
+    const char* vertexShaderSourcePtr = &vertexShaderSource[0];
+    const char* fragmentShaderSourcePtr = &fragmentShaderSource[0];
+
     //Must happen AFTER the context is set
     cout << "Compiling shaders...\n";
 
     unsigned int vertexShader;
     vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
+    glShaderSource(vertexShader, 1, &vertexShaderSourcePtr, NULL);
     glCompileShader(vertexShader);    
     checkShaderCompileErrors(vertexShader);
 
     unsigned int fragmentShader;
     fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
+    glShaderSource(fragmentShader, 1, &fragmentShaderSourcePtr, NULL);
     glCompileShader(fragmentShader);
     checkShaderCompileErrors(fragmentShader);
 
