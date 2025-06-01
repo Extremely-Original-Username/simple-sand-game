@@ -78,10 +78,10 @@ int main() {
     }
 
     float drawPlaneVertices[] = {
-        0.5f,  0.5f, 0.0f,  // top right
-        0.5f, -0.5f, 0.0f,  // bottom right
+        0.0f,  0.0f, 0.0f,  // top right
+        0.0f, -0.5f, 0.0f,  // bottom right
        -0.5f, -0.5f, 0.0f,  // bottom left
-       -0.5f,  0.5f, 0.0f   // top left 
+       -0.5f,  0.0f, 0.0f   // top left 
    };
 
    unsigned int drawPlaneIndices[] = {
@@ -127,24 +127,63 @@ int main() {
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(drawPlaneIndices), drawPlaneIndices, GL_DYNAMIC_DRAW); 
 
 
+    // Vertex data for the second square
+    float secondSquareVertices[] = {
+        0.5f,  0.5f, 0.0f,  // top right
+        0.5f, 0.0f, 0.0f,  // bottom right
+        0.0f, 0.0f, 0.0f,  // bottom left
+        0.0f,  0.5f, 0.0f   // top left 
+    };
+
+    // Index data for the second square
+    unsigned int secondSquareIndices[] = {
+        0, 1, 3,   // first triangle
+        1, 2, 3    // second triangle
+    };
+
+    // Create VAO for the second square
+    unsigned int secondVAO;
+    glGenVertexArrays(1, &secondVAO);
+    glBindVertexArray(secondVAO);
+
+    // Create VBO for the second square
+    unsigned int secondVBO;
+    glGenBuffers(1, &secondVBO);
+    glBindBuffer(GL_ARRAY_BUFFER, secondVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(secondSquareVertices), secondSquareVertices, GL_DYNAMIC_DRAW);
+
+    // Link vertex data to shader attributes
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+
+    // Create EBO for the second square
+    unsigned int secondEBO;
+    glGenBuffers(1, &secondEBO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, secondEBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(secondSquareIndices), secondSquareIndices, GL_DYNAMIC_DRAW);
+
+    // Unbind VAO for safety
+    glBindVertexArray(0);
+
+
     cout << "Beginning main loop...\n";
     while (!glfwWindowShouldClose(window))
     {
         processInput(window);
 
         /* Render here */
-        //Use shader program
         glClear(GL_COLOR_BUFFER_BIT);
+
+        // Use shader program
         glUseProgram(shaderProgram);
-        
-        //Bind and draw the EBO
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+
+        // Render the first square
+        glBindVertexArray(VAO);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-        
-        //Update a vertex position for demonstration
-        //Could be more efficient, just updating the whole buffer for now
-        drawPlaneVertices[1] += 0.01f; // Move the first vertex to the right
-        glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(drawPlaneVertices), drawPlaneVertices);
+
+        // Render the second square
+        glBindVertexArray(secondVAO);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
