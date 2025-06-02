@@ -9,11 +9,21 @@
 using namespace std;
 
 const string title = "Simple Sand!";
-const int windowWidth = 500;
-const int windowHeight = 450;
 const int gridWidth = 10;
 const int gridHeight = 9;
 
+int windowWidth = 500;
+int windowHeight = 450;
+
+// Callback to adjust the viewport when the window is resized
+inline void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+{
+    glViewport(0, 0, width, height);
+    windowWidth = width;
+    windowHeight = height;
+}
+
+//Entry point function
 int main() {
     cout << "Starting...\n";
     if (!glfwInit()){
@@ -63,6 +73,9 @@ int main() {
     glLinkProgram(shaderProgram);
     checkProgramLinkErrors(shaderProgram);
 
+    //Query the shader program for uniforms
+    int shaderProgramResolutionUniformLocation = glGetUniformLocation(shaderProgram, "MainWindowResolution");
+
     //Not needed once linked
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);  
@@ -78,10 +91,10 @@ int main() {
     }
 
     float drawPlaneVertices[] = {
-        0.5f,  0.5f, 0.0f,  // top right
-        0.5f, -0.5f, 0.0f,  // bottom right
-       -0.5f, -0.5f, 0.0f,  // bottom left
-       -0.5f,  0.5f, 0.0f   // top left 
+        1.0f,  1.0f, 0.0f,  // top right
+        1.0f, -1.0f, 0.0f,  // bottom right
+       -1.0f, -1.0f, 0.0f,  // bottom left
+       -1.0f,  1.0f, 0.0f   // top left 
    };
 
    unsigned int drawPlaneIndices[] = {
@@ -134,17 +147,13 @@ int main() {
 
         /* Render here */
         //Use shader program
+        glUniform2f(shaderProgramResolutionUniformLocation, windowWidth, windowHeight);
         glClear(GL_COLOR_BUFFER_BIT);
         glUseProgram(shaderProgram);
         
         //Bind and draw the EBO
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-        
-        //Update a vertex position for demonstration
-        //Could be more efficient, just updating the whole buffer for now
-        drawPlaneVertices[1] += 0.01f; // Move the first vertex to the right
-        glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(drawPlaneVertices), drawPlaneVertices);
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
