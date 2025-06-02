@@ -75,6 +75,11 @@ int main() {
 
     //Query the shader program for uniforms
     int shaderProgramResolutionUniformLocation = glGetUniformLocation(shaderProgram, "MainWindowResolution");
+    int sandGridResolutionUniformLocation = glGetUniformLocation(shaderProgram, "SandGridResolution");
+    int SandGridTextureUniformLocation = glGetUniformLocation(shaderProgram, "SandGridTexture");
+
+    //Set constant uniforms
+    glUniform2f(sandGridResolutionUniformLocation, gridWidth, gridHeight);
 
     //Not needed once linked
     glDeleteShader(vertexShader);
@@ -139,6 +144,28 @@ int main() {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(drawPlaneIndices), drawPlaneIndices, GL_DYNAMIC_DRAW); 
 
+    //Generate texture for the sand grid
+    cout << "Generating textures...\n";
+    unsigned int sandGridTexture;
+    glGenTextures(1, &sandGridTexture);
+    glBindTexture(GL_TEXTURE_2D, sandGridTexture);
+
+    float sandGridData[gridWidth * gridHeight];
+    //TODO: REMOVE THIS AND JUST USE 1D ARRAY
+    for (int y = 0; y < gridHeight; y++)
+    {
+        for (int x = 0; x < gridWidth; x++)
+        {
+            sandGridData[y * gridWidth + x] = sandGrid[x][y] ? 1.0f : 0.0f;
+        }
+    }
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_R8, gridWidth, gridHeight, 0, GL_RED, GL_FLOAT, sandGridData);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    // Pass the texture to the shader
+    glBindTexture(GL_TEXTURE_2D, sandGridTexture);
 
     cout << "Beginning main loop...\n";
     while (!glfwWindowShouldClose(window))
