@@ -12,9 +12,13 @@ void main()
 {
    /*Screen position between 0 and 1*/
    vec2 screenPos = gl_FragCoord.xy / MainWindowResolution;
-   int screenPercentX = int(screenPos.x * 100.0f);
-   int screenPercentY = int(screenPos.y * 100.0f);
+   
+   int screenPixelX = int(screenPos.x * MainWindowResolution.x);
+   int screenPixelY = int(screenPos.y * MainWindowResolution.y);
 
-   /*FragColor = vec4(float(screenPercentY * 5 % 100) / 100, float(screenPercentX * 5 % 100) / 100, 0.5f, 1.0f);*/
-   FragColor = texture(SandGridTexture, TextureCoordinates);
+   vec2 scale = vec2(MainWindowResolution.x / SandGridResolution.x, MainWindowResolution.y / SandGridResolution.y);
+
+   float pixelValue = texelFetch(SandGridTexture, ivec2(screenPixelX / scale.x, screenPixelY / scale.y), 0).r;
+
+   FragColor = vec4(pixelValue, pixelValue, pixelValue, 1.0);
 }

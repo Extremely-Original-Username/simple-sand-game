@@ -79,6 +79,7 @@ int main() {
     int SandGridTextureUniformLocation = glGetUniformLocation(shaderProgram, "SandGridTexture");
 
     //Set constant uniforms
+    glUseProgram(shaderProgram);
     glUniform2f(sandGridResolutionUniformLocation, gridWidth, gridHeight);
 
     //Not needed once linked
