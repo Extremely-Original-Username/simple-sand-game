@@ -52,4 +52,8 @@ inline string loadFileToString(string filename){
     return file_contents;
 }
 
+// Function declarations for main.cpp
+// TODO : Move these to a separate file
+void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+
 #endif // MAIN_HELPERS_H

@@ -15,14 +15,6 @@ const int gridHeight = 45;
 int windowWidth = 500;
 int windowHeight = 450;
 
-// Callback to adjust the viewport when the window is resized
-inline void framebuffer_size_callback(GLFWwindow* window, int width, int height)
-{
-    glViewport(0, 0, width, height);
-    windowWidth = width;
-    windowHeight = height;
-}
-
 //Entry point function
 int main() {
     cout << "Starting...\n";
@@ -192,6 +184,12 @@ int main() {
 
     glfwTerminate();
     return 0;
+}
 
-    return 0;
+// Callback to adjust the viewport when the window is resized
+inline void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+{
+    glViewport(0, 0, width, height);
+    windowWidth = width;
+    windowHeight = height;
 }
