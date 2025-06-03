@@ -74,14 +74,16 @@ int main() {
     int shaderProgramResolutionUniformLocation = glGetUniformLocation(shaderProgram, "MainWindowResolution");
     int sandGridResolutionUniformLocation = glGetUniformLocation(shaderProgram, "SandGridResolution");
     int SandGridTextureUniformLocation = glGetUniformLocation(shaderProgram, "SandGridTexture");
+    int CreateSandPositionUniformLocation = glGetUniformLocation(shaderProgram, "CreateSandPosition");
 
     //Set constant uniforms
     glUseProgram(shaderProgram);
     glUniform2f(sandGridResolutionUniformLocation, gridWidth, gridHeight);
+    glUniform2f(CreateSandPositionUniformLocation, -1.0f, -1.0f);
 
     //Create compute shader program
     unsigned int computeShader;
-computeShader = glCreateShader(GL_COMPUTE_SHADER);
+    computeShader = glCreateShader(GL_COMPUTE_SHADER);
     glShaderSource(computeShader, 1, &computeShaderSourcePtr, NULL);
     glCompileShader(computeShader);
     checkShaderCompileErrors(computeShader);
@@ -182,6 +184,9 @@ computeShader = glCreateShader(GL_COMPUTE_SHADER);
     while (!glfwWindowShouldClose(window))
     {
         processInput(window);
+        double cursorX, cursorY;
+        glfwGetCursorPos(window, &cursorX, &cursorY);
+        cout << "Cursor position: " << cursorX << ", " << cursorY << "\n";
 
         /* Render here */
         //Use rendering pipeline shader program
@@ -196,11 +201,11 @@ computeShader = glCreateShader(GL_COMPUTE_SHADER);
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
 
-        /*Compute sand*/
-        
-
-        // Bind the texture to the compute shader
+        // Switch to compute shader program
         glUseProgram(computeShaderProgram);
+
+        // Get mouse position - uniform is for this shader so must be set here
+        glUniform2i(CreateSandPositionUniformLocation, 10, 10);
 
         // Dispatch the compute shader
         glDispatchCompute(gridWidth, gridHeight, 1);
