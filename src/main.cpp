@@ -5,6 +5,7 @@
 #include <cstdlib>
 #include "mainHelpers.h"
 #include <GLES3/gl3.h>
+#include <GLES3/gl32.h>
 
 using namespace std;
 
@@ -79,7 +80,7 @@ int main() {
 
     //Create compute shader program
     unsigned int computeShader;
-    computeShader = glCreateShader(GL_COMPUTE_SHADER);
+computeShader = glCreateShader(GL_COMPUTE_SHADER);
     glShaderSource(computeShader, 1, &computeShaderSourcePtr, NULL);
     glCompileShader(computeShader);
     checkShaderCompileErrors(computeShader);
@@ -89,7 +90,7 @@ int main() {
     glAttachShader(computeShaderProgram, computeShader);
     glLinkProgram(computeShaderProgram);
     checkProgramLinkErrors(computeShaderProgram);
-
+    
     //Not needed once linked
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);  
@@ -158,7 +159,9 @@ int main() {
     cout << "Generating textures...\n";
     unsigned int sandGridTexture;
     glGenTextures(1, &sandGridTexture);
+    /*TODO: Do I need both?*/
     glBindTexture(GL_TEXTURE_2D, sandGridTexture);
+    glBindImageTexture(0, sandGridTexture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_R8);
 
     float sandGridData[gridWidth * gridHeight];
     //TODO: REMOVE THIS AND JUST USE 1D ARRAY
@@ -169,13 +172,10 @@ int main() {
             sandGridData[y * gridWidth + x] = sandGrid[x][y] ? 1.0f : 0.0f;
         }
     }
-
+    
     glTexImage2D(GL_TEXTURE_2D, 0, GL_R8, gridWidth, gridHeight, 0, GL_RED, GL_FLOAT, sandGridData);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-    // Pass the texture to the shader
-    glBindTexture(GL_TEXTURE_2D, sandGridTexture);
 
     cout << "Beginning main loop...\n";
     while (!glfwWindowShouldClose(window))
@@ -196,7 +196,16 @@ int main() {
         glfwSwapBuffers(window);
 
         /*Compute sand*/
+        
 
+        // Bind the texture to the compute shader
+        glUseProgram(computeShaderProgram);
+
+        // Dispatch the compute shader
+        glDispatchCompute(gridWidth, gridHeight, 1);
+
+        // Ensure the compute shader has completed before rendering
+        glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
 
         /* Poll for and process events */
         glfwPollEvents();
