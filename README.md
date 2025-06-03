@@ -1,4 +1,6 @@
 # simple-sand-game
+https://github.com/user-attachments/assets/8f99d575-2953-4bfe-b624-cb478b04fb3d
+
 A small experimental project to get some experience with C++ and OpenGl
 Mostly made following docs: 
 - https://learnopengl.com/Getting-started/OpenGL
