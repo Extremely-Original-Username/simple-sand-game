@@ -12,10 +12,27 @@ void main()
     ivec2 belowPixelCoord = currentPixelCoord + ivec2(0, -1);
     float belowPixelValue = imageLoad(SandGridTexture, belowPixelCoord).r;
 
-    if (currentPixelValue == 1 && belowPixelCoord.y < imageSize(SandGridTexture).y && belowPixelCoord.y >= 0 && belowPixelValue == 0) {
-        imageStore(SandGridTexture, currentPixelCoord, vec4(0.0, 0.0, 0.0, 1.0));
-        imageStore(SandGridTexture, belowPixelCoord, vec4(1.0, 0.0, 0.0, 1.0));
-    }
+    if (currentPixelValue == 1 && belowPixelCoord.y < imageSize(SandGridTexture).y && belowPixelCoord.y >= 0){
+        if (belowPixelValue == 0) {
+            imageStore(SandGridTexture, currentPixelCoord, vec4(0.0, 0.0, 0.0, 1.0));
+            imageStore(SandGridTexture, belowPixelCoord, vec4(1.0, 0.0, 0.0, 1.0));
+            return;
+        }
+        ivec2 leftBelowPixelCoord = currentPixelCoord + ivec2(-1, -1);
+        float leftBelowPixelValue = imageLoad(SandGridTexture, leftBelowPixelCoord).r;
+        ivec2 rightBelowPixelCoord = currentPixelCoord + ivec2(1, -1);
+        float rightBelowPixelValue = imageLoad(SandGridTexture, rightBelowPixelCoord).r;
 
-    /*imageStore(SandGridTexture, currentPixelCoord, vec4(newValue, 0.0, 0.0, 1.0));*/
+        //TODO - Randomise this
+        if (leftBelowPixelValue == 0){
+            imageStore(SandGridTexture, currentPixelCoord, vec4(0.0, 0.0, 0.0, 1.0));
+            imageStore(SandGridTexture, leftBelowPixelCoord, vec4(1.0, 0.0, 0.0, 1.0));
+            return;
+        }
+        if (rightBelowPixelValue == 0){
+            imageStore(SandGridTexture, currentPixelCoord, vec4(0.0, 0.0, 0.0, 1.0));
+            imageStore(SandGridTexture, rightBelowPixelCoord, vec4(1.0, 0.0, 0.0, 1.0));
+            return;
+        }
+    }
 }

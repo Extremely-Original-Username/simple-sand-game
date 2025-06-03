@@ -11,8 +11,8 @@
 using namespace std;
 
 const string title = "Simple Sand!";
-const int gridWidth = 50;
-const int gridHeight = 45;
+const int gridWidth = 100;
+const int gridHeight = 90;
 
 int windowWidth = 500;
 int windowHeight = 450;
