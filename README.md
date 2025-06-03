@@ -1,5 +1,5 @@
 # simple-sand-game
-https://github.com/user-attachments/assets/8f99d575-2953-4bfe-b624-cb478b04fb3d
+https://github.com/user-attachments/assets/9595329c-ded1-45c4-a127-a611de3decc5
 
 A small experimental project to get some experience with C++ and OpenGl
 Mostly made following docs: 
