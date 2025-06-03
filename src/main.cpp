@@ -9,8 +9,8 @@
 using namespace std;
 
 const string title = "Simple Sand!";
-const int gridWidth = 10;
-const int gridHeight = 9;
+const int gridWidth = 50;
+const int gridHeight = 45;
 
 int windowWidth = 500;
 int windowHeight = 450;
@@ -92,7 +92,7 @@ int main() {
     {
         for (int x = 0; x < gridWidth; x++)
         {
-            sandGrid[x][y] = rand() % 3 == 0;
+            sandGrid[x][y] = rand() % 5 == 0;
         }
     }
 
