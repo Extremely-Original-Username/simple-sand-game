@@ -6,6 +6,7 @@
 #include "mainHelpers.h"
 #include <GLES3/gl3.h>
 #include <GLES3/gl32.h>
+#include <unistd.h>
 
 using namespace std;
 
@@ -209,6 +210,7 @@ computeShader = glCreateShader(GL_COMPUTE_SHADER);
 
         /* Poll for and process events */
         glfwPollEvents();
+        //sleep(0.01);
     }
 
     glfwTerminate();

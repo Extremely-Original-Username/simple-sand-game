@@ -5,12 +5,17 @@ layout (r8, binding = 0) uniform image2D SandGridTexture;
 
 void main()
 {
-    ivec2 pixelCoord = ivec2(gl_GlobalInvocationID.xy);
-    float currentPixelValue = imageLoad(SandGridTexture, pixelCoord).r;
+    ivec2 currentPixelCoord = ivec2(gl_GlobalInvocationID.xy);
+    float currentPixelValue = imageLoad(SandGridTexture, currentPixelCoord).r;
 
-    float newValue = currentPixelValue + 0.01; // Example operation, incrementing the pixel value
+    /*Physics logic*/
+    ivec2 belowPixelCoord = currentPixelCoord + ivec2(0, -1);
+    float belowPixelValue = imageLoad(SandGridTexture, belowPixelCoord).r;
 
-    if  (pixelCoord.x > 5){
-        imageStore(SandGridTexture, pixelCoord, vec4(newValue, 0.0, 0.0, 1.0));
+    if (currentPixelValue == 1 && belowPixelCoord.y < imageSize(SandGridTexture).y && belowPixelCoord.y >= 0 && belowPixelValue == 0) {
+        imageStore(SandGridTexture, currentPixelCoord, vec4(0.0, 0.0, 0.0, 1.0));
+        imageStore(SandGridTexture, belowPixelCoord, vec4(1.0, 0.0, 0.0, 1.0));
     }
+
+    /*imageStore(SandGridTexture, currentPixelCoord, vec4(newValue, 0.0, 0.0, 1.0));*/
 }
