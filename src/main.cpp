@@ -38,13 +38,16 @@ int main() {
     cout << "Loading shaders...\n";
     const string vertexShaderSource = loadFileToString("./src/shaders/vertex.glsl");
     const string fragmentShaderSource = loadFileToString("./src/shaders/fragment.glsl");
+    const string computeShaderSource = loadFileToString("./src/shaders/compute.glsl");
 
     const char* vertexShaderSourcePtr = &vertexShaderSource[0];
     const char* fragmentShaderSourcePtr = &fragmentShaderSource[0];
+    const char* computeShaderSourcePtr = &computeShaderSource[0];
 
     //Must happen AFTER the context is set
     cout << "Compiling shaders...\n";
 
+    //Create rendering pipeline program
     unsigned int vertexShader;
     vertexShader = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vertexShader, 1, &vertexShaderSourcePtr, NULL);
@@ -74,9 +77,23 @@ int main() {
     glUseProgram(shaderProgram);
     glUniform2f(sandGridResolutionUniformLocation, gridWidth, gridHeight);
 
+    //Create compute shader program
+    unsigned int computeShader;
+    computeShader = glCreateShader(GL_COMPUTE_SHADER);
+    glShaderSource(computeShader, 1, &computeShaderSourcePtr, NULL);
+    glCompileShader(computeShader);
+    checkShaderCompileErrors(computeShader);
+
+    unsigned int computeShaderProgram;
+    computeShaderProgram = glCreateProgram();
+    glAttachShader(computeShaderProgram, computeShader);
+    glLinkProgram(computeShaderProgram);
+    checkProgramLinkErrors(computeShaderProgram);
+
     //Not needed once linked
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);  
+    glDeleteShader(computeShader);
 
     cout << "Initialising data...\n";
     bool sandGrid [gridWidth][gridHeight];
@@ -166,7 +183,7 @@ int main() {
         processInput(window);
 
         /* Render here */
-        //Use shader program
+        //Use rendering pipeline shader program
         glUniform2f(shaderProgramResolutionUniformLocation, windowWidth, windowHeight);
         glClear(GL_COLOR_BUFFER_BIT);
         glUseProgram(shaderProgram);
@@ -177,6 +194,9 @@ int main() {
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
+
+        /*Compute sand*/
+
 
         /* Poll for and process events */
         glfwPollEvents();
