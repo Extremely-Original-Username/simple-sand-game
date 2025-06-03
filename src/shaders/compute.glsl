@@ -9,7 +9,8 @@ void main()
     ivec2 currentPixelCoord = ivec2(gl_GlobalInvocationID.xy);
     float currentPixelValue = imageLoad(SandGridTexture, currentPixelCoord).r;
 
-    if(currentPixelCoord.x == 20 && currentPixelCoord.y == 50){
+    //Awful implementation, put this somewhere else and dont check EVERY pixel
+    if(abs(currentPixelCoord.x - CreateSandPosition.x) <= 1  && abs(currentPixelCoord.y - CreateSandPosition.y) <= 1){
         imageStore(SandGridTexture, currentPixelCoord, vec4(1.0, 0.0, 0.0, 1.0));
     }
 
@@ -29,12 +30,12 @@ void main()
         float rightBelowPixelValue = imageLoad(SandGridTexture, rightBelowPixelCoord).r;
 
         //TODO - Randomise this
-        if (leftBelowPixelValue == 0){
+        if (leftBelowPixelCoord.x > 0 && leftBelowPixelValue == 0){
             imageStore(SandGridTexture, currentPixelCoord, vec4(0.0, 0.0, 0.0, 1.0));
             imageStore(SandGridTexture, leftBelowPixelCoord, vec4(1.0, 0.0, 0.0, 1.0));
             return;
         }
-        if (rightBelowPixelValue == 0){
+        if (rightBelowPixelCoord.x < imageSize(SandGridTexture).x && rightBelowPixelValue == 0){
             imageStore(SandGridTexture, currentPixelCoord, vec4(0.0, 0.0, 0.0, 1.0));
             imageStore(SandGridTexture, rightBelowPixelCoord, vec4(1.0, 0.0, 0.0, 1.0));
             return;

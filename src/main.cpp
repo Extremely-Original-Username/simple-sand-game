@@ -1,3 +1,5 @@
+//This needs a BIG refactor, but it works for now.
+
 #include <iostream>
 #include <GLFW/glfw3.h>
 #include <GL/glext.h>
@@ -73,13 +75,10 @@ int main() {
     //Query the shader program for uniforms
     int shaderProgramResolutionUniformLocation = glGetUniformLocation(shaderProgram, "MainWindowResolution");
     int sandGridResolutionUniformLocation = glGetUniformLocation(shaderProgram, "SandGridResolution");
-    int SandGridTextureUniformLocation = glGetUniformLocation(shaderProgram, "SandGridTexture");
-    int CreateSandPositionUniformLocation = glGetUniformLocation(shaderProgram, "CreateSandPosition");
 
     //Set constant uniforms
     glUseProgram(shaderProgram);
     glUniform2f(sandGridResolutionUniformLocation, gridWidth, gridHeight);
-    glUniform2f(CreateSandPositionUniformLocation, -1.0f, -1.0f);
 
     //Create compute shader program
     unsigned int computeShader;
@@ -88,15 +87,18 @@ int main() {
     glCompileShader(computeShader);
     checkShaderCompileErrors(computeShader);
 
+    //Create compute shader program
     unsigned int computeShaderProgram;
     computeShaderProgram = glCreateProgram();
     glAttachShader(computeShaderProgram, computeShader);
     glLinkProgram(computeShaderProgram);
-    checkProgramLinkErrors(computeShaderProgram);
+    checkProgramLinkErrors(computeShaderProgram);    
+    int CreateSandPositionUniformLocation = glGetUniformLocation(computeShaderProgram, "CreateSandPosition");
+    glUniform2f(CreateSandPositionUniformLocation, -1.0f, -1.0f);
     
     //Not needed once linked
     glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);  
+    glDeleteShader(fragmentShader);
     glDeleteShader(computeShader);
 
     cout << "Initialising data...\n";
@@ -184,15 +186,20 @@ int main() {
     while (!glfwWindowShouldClose(window))
     {
         processInput(window);
+
+        double scaleX = windowWidth / (float)gridWidth;
+        double scaleY = windowHeight / (float)gridHeight;
+
         double cursorX, cursorY;
         glfwGetCursorPos(window, &cursorX, &cursorY);
-        cout << "Cursor position: " << cursorX << ", " << cursorY << "\n";
+        cursorX = cursorX / scaleX;
+        cursorY = (cursorY / -scaleY) + gridHeight;
 
         /* Render here */
         //Use rendering pipeline shader program
+        glUseProgram(shaderProgram);
         glUniform2f(shaderProgramResolutionUniformLocation, windowWidth, windowHeight);
         glClear(GL_COLOR_BUFFER_BIT);
-        glUseProgram(shaderProgram);
         
         //Bind and draw the EBO
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
@@ -205,7 +212,7 @@ int main() {
         glUseProgram(computeShaderProgram);
 
         // Get mouse position - uniform is for this shader so must be set here
-        glUniform2i(CreateSandPositionUniformLocation, 10, 10);
+        glUniform2i(CreateSandPositionUniformLocation, cursorX, cursorY);
 
         // Dispatch the compute shader
         glDispatchCompute(gridWidth, gridHeight, 1);
